@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Urban Threads - Trendy Streetwear</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <h2>Urban Threads</h2>
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="index.html" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="shop.html" class="nav-link">Shop</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" id="cart-link">
+              <i class="fas fa-shopping-cart"></i>
+              <span id="cart-count">0</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="login.html" class="nav-link" id="auth-link">Login</a>
+          </li>
+          <li class="nav-item user-info" id="user-info" style="display: none">
+            <span id="user-email"></span>
+            <button id="logout-btn" class="btn btn-secondary">Logout</button>
+          </li>
+        </ul>
+        <div class="hamburger">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Urban Threads</h1>
+        <p>Trendy Streetwear for Young Adults</p>
+        <a href="shop.html" class="btn btn-primary">Shop Now</a>
+      </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="categories">
+      <div class="container">
+        <h2>Shop by Category</h2>
+        <div class="category-grid">
+          <div class="category-card" data-category="Hoodies">
+            <img
+              src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400"
+              alt="Hoodies"
+            />
+            <h3>Hoodies</h3>
+            <p>Comfortable & Stylish</p>
+          </div>
+          <div class="category-card" data-category="T-shirts">
+            <img
+              src="https://images.unsplash.com/photo-1521572168571-1b5351aae0b6?w=400"
+              alt="T-shirts"
+            />
+            <h3>T-shirts</h3>
+            <p>Casual & Cool</p>
+          </div>
+          <div class="category-card" data-category="Sneakers">
+            <img
+              src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400"
+              alt="Sneakers"
+            />
+            <h3>Sneakers</h3>
+            <p>Step Up Your Game</p>
+          </div>
+          <div class="category-card" data-category="Accessories">
+            <img src="../images/accessories.png" alt="Accessories" />
+            <h3>Accessories</h3>
+            <p>Complete Your Look</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="featured-products">
+      <div class="container">
+        <h2>Featured Products</h2>
+        <div class="products-grid" id="featured-products">
+          <!-- Products will be loaded dynamically from Firebase -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>Urban Threads</h3>
+            <p>Your destination for trendy streetwear fashion.</p>
+          </div>
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="shop.html">Shop</a></li>
+              <li><a href="login.html">Account</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Contact</h4>
+            <p>Email: info@urbanthreads.com</p>
+            <p>Phone: (012) 123-4567</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 Urban Threads. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>

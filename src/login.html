@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Urban Threads</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <h2>Urban Threads</h2>
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="index.html" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="shop.html" class="nav-link">Shop</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" id="cart-link">
+              <i class="fas fa-shopping-cart"></i>
+              <span id="cart-count">0</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="login.html" class="nav-link active">Login</a>
+          </li>
+          <li class="nav-item user-info" id="user-info" style="display: none">
+            <span id="user-email"></span>
+            <button id="logout-btn" class="btn btn-secondary">Logout</button>
+          </li>
+        </ul>
+        <div class="hamburger">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Login Section -->
+    <section class="auth-section">
+      <div class="container">
+        <div class="auth-container">
+          <div class="auth-form-container">
+            <!-- Login Form -->
+            <div class="auth-form" id="login-form">
+              <h2>Welcome Back</h2>
+              <p>Login to your Urban Threads account</p>
+
+              <form id="login-form-element">
+                <div class="form-group">
+                  <label for="login-email">Email</label>
+                  <input
+                    type="email"
+                    id="login-email"
+                    required
+                    placeholder="Enter your email"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="login-password">Password</label>
+                  <input
+                    type="password"
+                    id="login-password"
+                    required
+                    placeholder="Enter your password"
+                  />
+                </div>
+
+                <button type="submit" class="btn btn-primary full-width">
+                  Login
+                </button>
+              </form>
+
+              <div class="auth-divider">
+                <span>OR</span>
+              </div>
+
+              <button class="btn btn-google full-width" id="google-login">
+                <i class="fab fa-google"></i>
+                Continue with Google
+              </button>
+
+              <p class="auth-switch">
+                Don't have an account?
+                <a href="#" id="show-signup">Sign Up</a>
+              </p>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="auth-form" id="signup-form" style="display: none">
+              <h2>Create Account</h2>
+              <p>Join Urban Threads today</p>
+
+              <form id="signup-form-element">
+                <div class="form-group">
+                  <label for="signup-name">Full Name</label>
+                  <input
+                    type="text"
+                    id="signup-name"
+                    required
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="signup-email">Email</label>
+                  <input
+                    type="email"
+                    id="signup-email"
+                    required
+                    placeholder="Enter your email"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="signup-password">Password</label>
+                  <input
+                    type="password"
+                    id="signup-password"
+                    required
+                    placeholder="Create a password"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="signup-confirm-password">Confirm Password</label>
+                  <input
+                    type="password"
+                    id="signup-confirm-password"
+                    required
+                    placeholder="Confirm your password"
+                  />
+                </div>
+
+                <button type="submit" class="btn btn-primary full-width">
+                  Sign Up
+                </button>
+              </form>
+
+              <div class="auth-divider">
+                <span>OR</span>
+              </div>
+
+              <button class="btn btn-google full-width" id="google-signup">
+                <i class="fab fa-google"></i>
+                Continue with Google
+              </button>
+
+              <p class="auth-switch">
+                Already have an account?
+                <a href="#" id="show-login">Login</a>
+              </p>
+            </div>
+          </div>
+
+          <!-- Auth Info -->
+          <div class="auth-info">
+            <h2>Why Join Urban Threads?</h2>
+            <div class="auth-features">
+              <div class="auth-feature">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Save Your Cart</h3>
+                <p>Keep your shopping cart synchronized across devices</p>
+              </div>
+              <div class="auth-feature">
+                <i class="fas fa-heart"></i>
+                <h3>Wishlist</h3>
+                <p>Save your favorite items for later</p>
+              </div>
+              <div class="auth-feature">
+                <i class="fas fa-truck"></i>
+                <h3>Fast Checkout</h3>
+                <p>Quick and secure checkout process</p>
+              </div>
+              <div class="auth-feature">
+                <i class="fas fa-tag"></i>
+                <h3>Exclusive Deals</h3>
+                <p>Get access to member-only discounts</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="spinner"></div>
+      <p>Processing...</p>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-message" id="success-message">
+      <div class="success-content">
+        <i class="fas fa-check-circle"></i>
+        <p id="success-text">Success!</p>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-message" id="error-message">
+      <div class="error-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <p id="error-text">Error occurred!</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>Urban Threads</h3>
+            <p>Your destination for trendy streetwear fashion.</p>
+          </div>
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="shop.html">Shop</a></li>
+              <li><a href="login.html">Account</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Contact</h4>
+            <p>Email: info@urbanthreads.com</p>
+            <p>Phone: (012) 123-4567</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 Urban Threads. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+  </body>
+</html>

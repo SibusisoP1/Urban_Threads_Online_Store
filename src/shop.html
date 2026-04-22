@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop - Urban Threads</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <h2>Urban Threads</h2>
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="index.html" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="shop.html" class="nav-link active">Shop</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" id="cart-link">
+              <i class="fas fa-shopping-cart"></i>
+              <span id="cart-count">0</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="login.html" class="nav-link" id="auth-link">Login</a>
+          </li>
+          <li class="nav-item user-info" id="user-info" style="display: none">
+            <span id="user-email"></span>
+            <button id="logout-btn" class="btn btn-secondary">Logout</button>
+          </li>
+        </ul>
+        <div class="hamburger">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Shop Header -->
+    <section class="shop-header">
+      <div class="container">
+        <h1>Shop All Products</h1>
+        <p>Discover our latest collection of trendy streetwear</p>
+      </div>
+    </section>
+
+    <!-- Filters and Products -->
+    <section class="shop-content">
+      <div class="container">
+        <div class="shop-layout">
+          <!-- Sidebar Filters -->
+          <aside class="sidebar">
+            <div class="filter-section">
+              <h3>Categories</h3>
+              <div class="filter-options">
+                <label class="filter-option">
+                  <input
+                    type="checkbox"
+                    value="Hoodies"
+                    class="category-filter"
+                  />
+                  <span>Hoodies</span>
+                </label>
+                <label class="filter-option">
+                  <input
+                    type="checkbox"
+                    value="T-shirts"
+                    class="category-filter"
+                  />
+                  <span>T-shirts</span>
+                </label>
+                <label class="filter-option">
+                  <input
+                    type="checkbox"
+                    value="Sneakers"
+                    class="category-filter"
+                  />
+                  <span>Sneakers</span>
+                </label>
+                <label class="filter-option">
+                  <input
+                    type="checkbox"
+                    value="Accessories"
+                    class="category-filter"
+                  />
+                  <span>Accessories</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="filter-section">
+              <h3>Price Range</h3>
+              <div class="price-filter">
+                <input
+                  type="range"
+                  id="price-range"
+                  min="0"
+                  max="200"
+                  value="200"
+                />
+                <div class="price-display">
+                  <span>Up to R<span id="price-value">200</span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="filter-section">
+              <h3>Sort By</h3>
+              <select id="sort-select" class="sort-select">
+                <option value="name-asc">Name: A to Z</option>
+                <option value="name-desc">Name: Z to A</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </select>
+            </div>
+          </aside>
+
+          <!-- Products Grid -->
+          <main class="products-main">
+            <div class="products-header">
+              <div class="results-count">
+                <span id="results-count">Loading products...</span>
+              </div>
+              <div class="view-options">
+                <button class="view-btn active" data-view="grid">
+                  <i class="fas fa-th"></i>
+                </button>
+                <button class="view-btn" data-view="list">
+                  <i class="fas fa-list"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="products-grid" id="products-grid">
+              <!-- Products will be loaded dynamically from Firebase -->
+            </div>
+
+            <div class="no-products" id="no-products" style="display: none">
+              <h3>No products found</h3>
+              <p>Try adjusting your filters or browse all categories.</p>
+              <button class="btn btn-secondary" id="clear-filters">
+                Clear Filters
+              </button>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>Urban Threads</h3>
+            <p>Your destination for trendy streetwear fashion.</p>
+          </div>
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="shop.html">Shop</a></li>
+              <li><a href="login.html">Account</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Contact</h4>
+            <p>Email: info@urbanthreads.com</p>
+            <p>Phone: (012) 123-4567</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 Urban Threads. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Product Modal -->
+    <div class="product-modal" id="product-modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-product">
+          <div class="modal-image">
+            <img id="modal-image" src="" alt="" />
+          </div>
+          <div class="modal-details">
+            <h2 id="modal-name"></h2>
+            <p id="modal-category"></p>
+            <p id="modal-description"></p>
+            <div class="modal-price">
+              <span id="modal-price"></span>
+            </div>
+            <div class="modal-actions">
+              <button class="btn btn-primary" id="modal-add-to-cart">
+                Add to Cart
+              </button>
+              <button class="btn btn-secondary" id="modal-close">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <script src="shop.js"></script>
+  </body>
+</html>
