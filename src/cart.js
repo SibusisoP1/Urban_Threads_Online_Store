@@ -209,15 +209,6 @@ class CartManager {
         imageURL: product.imageURL,
         quantity: quantity,
       });
-      console.log("Added new item to cart:", {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        category: product.category,
-        description: product.description,
-        imageURL: product.imageURL,
-        quantity: quantity,
-      });
     }
 
     console.log("Cart before save:", this.cart);
