@@ -1,5 +1,7 @@
 // Authentication System for Urban Threads
 
+// Authentication System for Urban Threads
+
 class AuthManager {
   constructor() {
     this.currentUser = null;
@@ -8,6 +10,12 @@ class AuthManager {
   }
 
   init() {
+    // Check if Firebase auth is available
+    if (typeof auth === 'undefined') {
+      console.error('Firebase auth not initialized');
+      return;
+    }
+    
     // Listen for authentication state changes
     auth.onAuthStateChanged((user) => {
       this.currentUser = user;
@@ -74,6 +82,11 @@ class AuthManager {
   }
 
   async handleLogin() {
+    if (typeof auth === 'undefined') {
+      this.showError('Firebase auth not initialized');
+      return;
+    }
+    
     const email = document.getElementById("login-email").value;
     const password = document.getElementById("login-password").value;
 
@@ -100,6 +113,11 @@ class AuthManager {
   }
 
   async handleSignup() {
+    if (typeof auth === 'undefined') {
+      this.showError('Firebase auth not initialized');
+      return;
+    }
+    
     const name = document.getElementById("signup-name").value;
     const email = document.getElementById("signup-email").value;
     const password = document.getElementById("signup-password").value;
@@ -154,6 +172,11 @@ class AuthManager {
   }
 
   async handleGoogleAuth() {
+    if (typeof auth === 'undefined') {
+      this.showError('Firebase auth not initialized');
+      return;
+    }
+    
     this.showLoading(true);
 
     try {
@@ -179,6 +202,11 @@ class AuthManager {
   }
 
   async handleLogout() {
+    if (typeof auth === 'undefined') {
+      this.showError('Firebase auth not initialized');
+      return;
+    }
+    
     try {
       await auth.signOut();
       this.showSuccess("Logged out successfully!");
@@ -193,6 +221,11 @@ class AuthManager {
   }
 
   async createUserDocument(user, displayName) {
+    if (typeof db === 'undefined') {
+      console.error('Firestore db not initialized');
+      return;
+    }
+    
     try {
       await db
         .collection("users")
@@ -327,8 +360,18 @@ class AuthManager {
   }
 }
 
-// Initialize AuthManager
-const authManager = new AuthManager();
+// Initialize AuthManager when Firebase is ready
+let authManager;
+
+window.initializeAuthManager = function() {
+  if (typeof auth !== 'undefined' && typeof db !== 'undefined') {
+    authManager = new AuthManager();
+    window.authManager = authManager; // Make it globally available
+    console.log('AuthManager initialized successfully');
+  } else {
+    console.error('Firebase not initialized properly');
+  }
+};
 
 // Export for use in other files
 if (typeof module !== "undefined" && module.exports) {

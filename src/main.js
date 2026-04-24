@@ -49,6 +49,12 @@ class MainManager {
   }
 
   async loadFeaturedProducts() {
+    if (typeof db === 'undefined') {
+      console.error('Firestore db not initialized');
+      this.renderEmptyFeaturedProducts();
+      return;
+    }
+    
     try {
       // Get featured products from Firestore
       const snapshot = await db
@@ -59,12 +65,15 @@ class MainManager {
 
       this.featuredProducts = [];
       snapshot.forEach((doc) => {
-        this.featuredProducts.push({
+        const productData = {
           id: doc.id,
           ...doc.data(),
-        });
+        };
+        this.featuredProducts.push(productData);
+        console.log('Loaded product:', productData); // Debug log
       });
 
+      console.log('All featured products:', this.featuredProducts); // Debug log
       this.renderFeaturedProducts();
     } catch (error) {
       console.error("Error loading featured products:", error);
@@ -74,7 +83,10 @@ class MainManager {
 
   renderFeaturedProducts() {
     const container = document.getElementById("featured-products");
-    if (!container) return;
+    if (!container) {
+      console.error('Featured products container not found');
+      return;
+    }
 
     if (this.featuredProducts.length === 0) {
       this.renderEmptyFeaturedProducts();
@@ -86,7 +98,10 @@ class MainManager {
     this.featuredProducts.forEach((product) => {
       const productCard = this.createProductCard(product);
       container.appendChild(productCard);
+      console.log('Product card added to DOM:', productCard); // Debug log
     });
+    
+    console.log('Final container HTML:', container.innerHTML); // Debug log
   }
 
   renderEmptyFeaturedProducts() {
@@ -102,6 +117,7 @@ class MainManager {
   }
 
   createProductCard(product) {
+    console.log('Creating product card for:', product); // Debug log
     const card = document.createElement("div");
     card.className = "product-card";
 
@@ -109,7 +125,7 @@ class MainManager {
     const isSale = product.sale || false;
     const salePercentage = product.salePercentage || 0;
 
-    card.innerHTML = `
+    const cardHTML = `
             <div class="product-image">
                 <img src="${product.imageURL}" alt="${product.name}">
                 ${isSale ? `<span class="product-badge">${salePercentage}% OFF</span>` : ""}
@@ -132,42 +148,86 @@ class MainManager {
                 </div>
             </div>
         `;
+    
+    console.log('Card HTML:', cardHTML); // Debug log
+    card.innerHTML = cardHTML;
 
     return card;
   }
 
   async viewProduct(productId) {
+    if (typeof db === 'undefined') {
+      console.error('Firestore db not initialized');
+      if (typeof authManager !== 'undefined') {
+        authManager.showError("Database not available");
+      }
+      return;
+    }
+    
     try {
       const doc = await db.collection("products").doc(productId).get();
       if (doc.exists) {
         const product = { id: doc.id, ...doc.data() };
         this.showProductModal(product);
       } else {
-        authManager.showError("Product not found");
+        if (typeof authManager !== 'undefined') {
+          authManager.showError("Product not found");
+        }
       }
     } catch (error) {
       console.error("Error viewing product:", error);
-      authManager.showError("Error loading product details");
+      if (typeof authManager !== 'undefined') {
+        authManager.showError("Error loading product details");
+      }
     }
   }
 
   async addToCart(productId) {
-    if (!authManager.isAuthenticated()) {
-      authManager.showError("Please login to add items to cart");
+    console.log('Add to cart clicked for product ID:', productId);
+    console.log('AuthManager available:', typeof authManager !== 'undefined');
+    console.log('User authenticated:', typeof authManager !== 'undefined' && authManager.isAuthenticated());
+    console.log('CartManager available:', typeof cartManager !== 'undefined');
+    
+    if (typeof authManager === 'undefined' || !authManager.isAuthenticated()) {
+      console.log('User not authenticated, showing login message');
+      if (typeof authManager !== 'undefined') {
+        authManager.showError("Please login to add items to cart");
+      }
+      return;
+    }
+
+    if (typeof db === 'undefined') {
+      console.error('Firestore db not initialized');
+      if (typeof authManager !== 'undefined') {
+        authManager.showError("Database not available");
+      }
       return;
     }
 
     try {
+      console.log('Fetching product from Firestore...');
       const doc = await db.collection("products").doc(productId).get();
       if (doc.exists) {
         const product = { id: doc.id, ...doc.data() };
-        await cartManager.addToCart(product, 1);
+        console.log('Product fetched:', product);
+        if (typeof cartManager !== 'undefined') {
+          console.log('Adding to cart...');
+          await cartManager.addToCart(product, 1);
+          console.log('Product added to cart successfully');
+        } else {
+          console.error('CartManager not available');
+        }
       } else {
-        authManager.showError("Product not found");
+        console.log('Product not found in Firestore');
+        if (typeof authManager !== 'undefined') {
+          authManager.showError("Product not found");
+        }
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
-      authManager.showError("Error adding item to cart");
+      if (typeof authManager !== 'undefined') {
+        authManager.showError("Error adding item to cart");
+      }
     }
   }
 
@@ -209,7 +269,9 @@ class MainManager {
 
     // Add new event listeners
     newAddToCartBtn.addEventListener("click", async () => {
-      await cartManager.addToCart(product, 1);
+      if (typeof cartManager !== 'undefined') {
+        await cartManager.addToCart(product, 1);
+      }
       this.closeProductModal();
     });
 
@@ -226,132 +288,40 @@ class MainManager {
     }
   }
 
-  // Method to initialize sample products (for testing)
-  async initializeSampleProducts() {
-    const sampleProducts = [
-      {
-        name: "Oversized Hoodie",
-        price: 49.99,
-        category: "Hoodies",
-        description:
-          "Soft cotton hoodie in oversized fit. Perfect for casual streetwear.",
-        imageURL:
-          "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400",
-        sale: true,
-        salePercentage: 20,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-      {
-        name: "Classic T-Shirt",
-        price: 24.99,
-        category: "T-shirts",
-        description:
-          "Premium cotton t-shirt with modern fit and comfortable feel.",
-        imageURL:
-          "https://images.unsplash.com/photo-1521572168571-1b5351aae0b6?w=400",
-        sale: false,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-      {
-        name: "Street Sneakers",
-        price: 89.99,
-        category: "Sneakers",
-        description:
-          "High-quality sneakers with superior comfort and urban style.",
-        imageURL:
-          "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400",
-        sale: true,
-        salePercentage: 15,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-      {
-        name: "Urban Backpack",
-        price: 39.99,
-        category: "Accessories",
-        description:
-          "Stylish backpack perfect for daily commute and street style.",
-        imageURL:
-          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400",
-        sale: false,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-      {
-        name: "Zip-Up Hoodie",
-        price: 54.99,
-        category: "Hoodies",
-        description:
-          "Comfortable zip-up hoodie with front pockets and adjustable hood.",
-        imageURL:
-          "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400",
-        sale: false,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-      {
-        name: "Graphic Tee",
-        price: 29.99,
-        category: "T-shirts",
-        description: "Eye-catching graphic t-shirt with unique urban design.",
-        imageURL:
-          "https://images.unsplash.com/photo-1583743818113-90b22e8973df?w=400",
-        sale: true,
-        salePercentage: 25,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-      {
-        name: "Running Shoes",
-        price: 119.99,
-        category: "Sneakers",
-        description:
-          "Performance running shoes with advanced cushioning technology.",
-        imageURL:
-          "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400",
-        sale: false,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-      {
-        name: "Baseball Cap",
-        price: 19.99,
-        category: "Accessories",
-        description:
-          "Classic baseball cap with embroidered logo and adjustable strap.",
-        imageURL:
-          "https://images.unsplash.com/photo-1574662795486-8362ffb37c62?w=400",
-        sale: true,
-        salePercentage: 10,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-    ];
+  }
 
-    try {
-      // Add sample products to Firestore
-      for (const product of sampleProducts) {
-        await db.collection("products").add(product);
-      }
-
-      console.log("Sample products added successfully");
-      authManager.showSuccess("Sample products added to database!");
-
-      // Reload featured products
-      await this.loadFeaturedProducts();
-    } catch (error) {
-      console.error("Error adding sample products:", error);
-      authManager.showError("Error adding sample products");
+// Initialize MainManager when Firebase is ready
+document.addEventListener("DOMContentLoaded", () => {
+  // Wait for Firebase to be ready before initializing MainManager
+  function initializeMainManager() {
+    if (window.firebaseReady) {
+      window.mainManager = new MainManager();
+      console.log('MainManager initialized successfully');
+      
+      // Handle modal close when clicking outside
+      window.addEventListener("click", (event) => {
+        const modal = document.getElementById("product-modal");
+        if (modal && event.target === modal) {
+          window.mainManager.closeProductModal();
+        }
+      });
+    } else {
+      // Retry after a short delay
+      setTimeout(initializeMainManager, 100);
     }
   }
-}
-
-// Initialize MainManager when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-  window.mainManager = new MainManager();
+  
+  initializeMainManager();
 });
 
-// Handle modal close when clicking outside
-window.addEventListener("click", (event) => {
-  const modal = document.getElementById("product-modal");
-  if (modal && event.target === modal) {
-    window.mainManager.closeProductModal();
+// Helper function to wait for mainManager to be available
+window.waitForMainManager = function(callback) {
+  if (typeof window.mainManager !== 'undefined') {
+    callback();
+  } else {
+    setTimeout(() => window.waitForMainManager(callback), 100);
   }
-});
+};
 
 // Export for use in other files
 if (typeof module !== "undefined" && module.exports) {

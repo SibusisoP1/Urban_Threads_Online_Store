@@ -108,6 +108,12 @@ class ShopManager {
   }
 
   async loadProducts() {
+    if (typeof db === 'undefined') {
+      console.error('Firestore db not initialized');
+      this.renderErrorProducts();
+      return;
+    }
+    
     try {
       // Show loading state
       this.showLoading(true);
@@ -419,9 +425,20 @@ class ShopManager {
   }
 }
 
-// Initialize ShopManager when DOM is loaded
+// Initialize ShopManager when Firebase is ready
 document.addEventListener("DOMContentLoaded", () => {
-  window.shopManager = new ShopManager();
+  // Wait for Firebase to be ready before initializing ShopManager
+  function initializeShopManager() {
+    if (window.firebaseReady) {
+      window.shopManager = new ShopManager();
+      console.log('ShopManager initialized successfully');
+    } else {
+      // Retry after a short delay
+      setTimeout(initializeShopManager, 100);
+    }
+  }
+  
+  initializeShopManager();
 });
 
 // Export for use in other files

@@ -1,10 +1,12 @@
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "your-api-key-here",
-  authDomain: "urbanthreadstore.firebaseapp.com",
-  projectId: "urbanthreadstore",
-  storageBucket: "urbanthreadstore.appspot.com",
-  messagingSenderId: "your-sender-id",
-  appId: "your-app-id",
+  apiKey: "AIzaSyBUq0h-6hVfJ-dBMflbyQ20XyFNdL7BWjI",
+  authDomain: "urbanthreadsstore-3dde1.firebaseapp.com",
+  projectId: "urbanthreadsstore-3dde1",
+  storageBucket: "urbanthreadsstore-3dde1.firebasestorage.app",
+  messagingSenderId: "28776324764",
+  appId: "1:28776324764:web:b1dd597132efbe86639759",
+  measurementId: "G-RR6PPVLMB8",
 };
 
 // Initialize Firebase
@@ -29,3 +31,21 @@ db.enablePersistence().catch((err) => {
 });
 
 console.log("Firebase initialized successfully");
+
+// Global flag to track Firebase initialization
+window.firebaseReady = true;
+
+// Initialize all managers when Firebase is ready
+function initializeAllManagers() {
+  if (window.firebaseReady && typeof window.initializeAuthManager === 'function') {
+    window.initializeAuthManager();
+  }
+  if (window.firebaseReady && typeof window.initializeCartManager === 'function') {
+    window.initializeCartManager();
+  }
+}
+
+// Wait for DOM to be ready, then initialize
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(initializeAllManagers, 100);
+});

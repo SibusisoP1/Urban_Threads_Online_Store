@@ -8,7 +8,7 @@ class CartManager {
   }
 
   init() {
-    // Load cart from localStorage or Firestore
+    // Load cart from Firestore
     this.loadCart();
 
     // Set up event listeners
@@ -24,10 +24,15 @@ class CartManager {
     if (cartLink) {
       cartLink.addEventListener("click", (e) => {
         e.preventDefault();
-        if (authManager.isAuthenticated()) {
+        if (
+          typeof authManager !== "undefined" &&
+          authManager.isAuthenticated()
+        ) {
           window.location.href = "cart.html";
         } else {
-          authManager.showError("Please login to view your cart");
+          if (typeof authManager !== "undefined") {
+            authManager.showError("Please login to view your cart");
+          }
           window.location.href = "login.html";
         }
       });
@@ -71,7 +76,9 @@ class CartManager {
     const viewOrders = document.getElementById("view-orders");
     if (viewOrders) {
       viewOrders.addEventListener("click", () => {
-        authManager.showError("Order history feature coming soon!");
+        if (typeof authManager !== "undefined") {
+          authManager.showError("Order history feature coming soon!");
+        }
       });
     }
 
@@ -96,16 +103,29 @@ class CartManager {
   }
 
   async loadCart() {
-    if (authManager.isAuthenticated()) {
+    console.log("Loading cart...");
+    console.log("AuthManager available:", typeof authManager !== "undefined");
+    console.log(
+      "User authenticated:",
+      typeof authManager !== "undefined" && authManager.isAuthenticated(),
+    );
+
+    if (typeof authManager !== "undefined" && authManager.isAuthenticated()) {
       // Load cart from Firestore for logged-in users
       try {
         const user = authManager.getCurrentUser();
+        console.log("Current user:", user);
+        console.log("Loading cart for user ID:", user.uid);
+
         const doc = await db.collection("carts").doc(user.uid).get();
+        console.log("Cart document exists:", doc.exists);
 
         if (doc.exists) {
           this.cart = doc.data().items || [];
+          console.log("Cart loaded from Firestore:", this.cart);
         } else {
           this.cart = [];
+          console.log("No cart document found, using empty cart");
         }
       } catch (error) {
         console.error("Error loading cart from Firestore:", error);
@@ -113,29 +133,42 @@ class CartManager {
       }
     } else {
       // Load cart from localStorage for guest users
+      console.log("Loading cart from localStorage...");
       const savedCart = localStorage.getItem("urbanThreadsCart");
+      console.log("Saved cart data:", savedCart);
+
       if (savedCart) {
         try {
           this.cart = JSON.parse(savedCart);
+          console.log("Cart loaded from localStorage:", this.cart);
         } catch (error) {
           console.error("Error parsing cart from localStorage:", error);
           this.cart = [];
         }
       } else {
         this.cart = [];
+        console.log("No cart found in localStorage, using empty cart");
       }
     }
   }
 
   async saveCart() {
-    if (authManager.isAuthenticated()) {
+    if (typeof authManager !== "undefined" && authManager.isAuthenticated()) {
       // Save cart to Firestore for logged-in users
       try {
         const user = authManager.getCurrentUser();
+        console.log("Saving cart for user ID:", user.uid);
+        console.log("Cart data to save:", {
+          items: this.cart,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+
         await db.collection("carts").doc(user.uid).set({
           items: this.cart,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         });
+
+        console.log("Cart saved successfully to Firestore");
       } catch (error) {
         console.error("Error saving cart to Firestore:", error);
       }
@@ -146,8 +179,17 @@ class CartManager {
   }
 
   async addToCart(product, quantity = 1) {
-    if (!authManager.isAuthenticated()) {
-      authManager.showError("Please login to add items to cart");
+    console.log("Adding to cart:", product);
+    console.log("AuthManager available:", typeof authManager !== "undefined");
+    console.log(
+      "User authenticated:",
+      typeof authManager !== "undefined" && authManager.isAuthenticated(),
+    );
+
+    if (typeof authManager === "undefined" || !authManager.isAuthenticated()) {
+      if (typeof authManager !== "undefined") {
+        authManager.showError("Please login to add items to cart");
+      }
       return;
     }
 
@@ -156,6 +198,7 @@ class CartManager {
 
     if (existingItem) {
       existingItem.quantity += quantity;
+      console.log("Updated existing item quantity:", existingItem.quantity);
     } else {
       this.cart.push({
         id: product.id,
@@ -166,13 +209,26 @@ class CartManager {
         imageURL: product.imageURL,
         quantity: quantity,
       });
+      console.log("Added new item to cart:", {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        category: product.category,
+        description: product.description,
+        imageURL: product.imageURL,
+        quantity: quantity,
+      });
     }
 
+    console.log("Cart before save:", this.cart);
     await this.saveCart();
+    console.log("Cart after save:", this.cart);
     this.updateCartUI();
     this.notifyListeners();
 
-    authManager.showSuccess(`${product.name} added to cart!`);
+    if (typeof authManager !== "undefined") {
+      authManager.showSuccess(`${product.name} added to cart!`);
+    }
   }
 
   async removeFromCart(productId) {
@@ -283,7 +339,9 @@ class CartManager {
 
   openCheckoutModal() {
     if (this.cart.length === 0) {
-      authManager.showError("Your cart is empty");
+      if (typeof authManager !== "undefined") {
+        authManager.showError("Your cart is empty");
+      }
       return;
     }
 
@@ -341,8 +399,10 @@ class CartManager {
   }
 
   async handleCheckout() {
-    if (!authManager.isAuthenticated()) {
-      authManager.showError("Please login to checkout");
+    if (typeof authManager === "undefined" || !authManager.isAuthenticated()) {
+      if (typeof authManager !== "undefined") {
+        authManager.showError("Please login to checkout");
+      }
       return;
     }
 
@@ -369,7 +429,9 @@ class CartManager {
       !expiry ||
       !cvv
     ) {
-      authManager.showError("Please fill in all fields");
+      if (typeof authManager !== "undefined") {
+        authManager.showError("Please fill in all fields");
+      }
       return;
     }
 
@@ -420,7 +482,9 @@ class CartManager {
       this.showSuccessModal(order.orderNumber);
     } catch (error) {
       console.error("Checkout error:", error);
-      authManager.showError("Error processing order. Please try again.");
+      if (typeof authManager !== "undefined") {
+        authManager.showError("Error processing order. Please try again.");
+      }
     } finally {
       this.showLoading(false);
     }
@@ -472,8 +536,31 @@ class CartManager {
   }
 }
 
-// Initialize CartManager
-const cartManager = new CartManager();
+// Initialize CartManager when Firebase is ready
+let cartManager;
+
+window.initializeCartManager = function () {
+  cartManager = new CartManager();
+  window.cartManager = cartManager; // Make it globally available
+  console.log("CartManager initialized successfully");
+
+  // Force cart rendering if on cart.html page and user is authenticated
+  if (window.location.pathname.includes("cart.html")) {
+    setTimeout(() => {
+      console.log("Checking authentication state...");
+      if (typeof authManager !== "undefined" && authManager.isAuthenticated()) {
+        console.log("User is authenticated, reloading cart from Firestore...");
+        cartManager.loadCart(); // Force reload from Firestore
+        setTimeout(() => {
+          cartManager.renderCartItems();
+          cartManager.renderCartSummary();
+        }, 1000);
+      } else {
+        console.log("User is not authenticated, showing empty cart");
+      }
+    }, 1000);
+  }
+};
 
 // Export for use in other files
 if (typeof module !== "undefined" && module.exports) {
