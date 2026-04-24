@@ -103,7 +103,7 @@ class AuthManager {
 
       // Redirect to home page after successful login
       setTimeout(() => {
-        window.location.href = "index.html";
+        window.location.href = "../index.html";
       }, 1500);
     } catch (error) {
       this.showError(this.getErrorMessage(error));
@@ -162,7 +162,7 @@ class AuthManager {
 
       // Redirect to home page after successful signup
       setTimeout(() => {
-        window.location.href = "index.html";
+        window.location.href = "../index.html";
       }, 1500);
     } catch (error) {
       this.showError(this.getErrorMessage(error));
@@ -192,7 +192,7 @@ class AuthManager {
 
       // Redirect to home page after successful login
       setTimeout(() => {
-        window.location.href = "index.html";
+        window.location.href = "../index.html";
       }, 1500);
     } catch (error) {
       this.showError(this.getErrorMessage(error));
@@ -213,7 +213,14 @@ class AuthManager {
 
       // Redirect to home page after logout
       setTimeout(() => {
-        window.location.href = "index.html";
+        // Check if we're on the root index.html or in src folder
+        if (window.location.pathname === '/' || window.location.pathname.endsWith('/index.html')) {
+          // We're already on index.html, just reload
+          window.location.reload();
+        } else {
+          // We're in src folder, go to root index.html
+          window.location.href = "../index.html";
+        }
       }, 1000);
     } catch (error) {
       this.showError("Error logging out");

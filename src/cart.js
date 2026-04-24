@@ -28,7 +28,12 @@ class CartManager {
           typeof authManager !== "undefined" &&
           authManager.isAuthenticated()
         ) {
-          window.location.href = "cart.html";
+          // Check if we're on root index.html or in src folder
+          if (window.location.pathname === '/' || window.location.pathname.endsWith('/index.html')) {
+            window.location.href = "src/cart.html";
+          } else {
+            window.location.href = "cart.html";
+          }
         } else {
           if (typeof authManager !== "undefined") {
             authManager.showError("Please login to view your cart");
